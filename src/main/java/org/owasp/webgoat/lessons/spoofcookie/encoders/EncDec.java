@@ -23,8 +23,8 @@
 package org.owasp.webgoat.lessons.spoofcookie.encoders;
 
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Base64;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.codec.Hex;
 
 /***
@@ -37,7 +37,8 @@ public class EncDec {
 
   // PoC: weak encoding method
 
-  private static final String SALT = RandomStringUtils.randomAlphabetic(10);
+  private static final String SALT =
+      new String(new SecureRandom().generateSeed(10), StandardCharsets.UTF_8);
 
   private EncDec() {}
 
