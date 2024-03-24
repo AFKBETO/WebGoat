@@ -29,6 +29,7 @@ import org.owasp.webgoat.container.assignments.AssignmentHints;
 import org.owasp.webgoat.container.assignments.AttackResult;
 import org.owasp.webgoat.container.session.UserSessionData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +42,8 @@ import org.springframework.web.bind.annotation.RestController;
 @AssignmentHints({"lesson-template.hints.1", "lesson-template.hints.2", "lesson-template.hints.3"})
 public class SampleAttack extends AssignmentEndpoint {
 
-  String secretValue = "secr37Value";
+  @Value("${lesson-template.secret}")
+  String secretValue;
 
   // UserSessionData is bound to session and can be used to persist data across multiple assignments
   @Autowired UserSessionData userSessionData;
