@@ -68,9 +68,9 @@ public class SqlInjectionLesson8 extends AssignmentEndpoint {
 
     try (Connection connection = dataSource.getConnection()) {
       try {
-      PreparedStatement statement = connection.prepareStatement(query);
-      statement.setString(1, name);
-      statement.setString(2, auth_tan);
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, name);
+        statement.setString(2, auth_tan);
         log(connection, query);
         ResultSet results = statement.executeQuery(query);
 
