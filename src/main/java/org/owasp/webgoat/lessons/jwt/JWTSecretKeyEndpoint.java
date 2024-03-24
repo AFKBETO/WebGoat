@@ -50,7 +50,7 @@ public class JWTSecretKeyEndpoint extends AssignmentEndpoint {
   @Value("${jwt.secrets}")
   private static String _secrets;
 
-  public static final String[] SECRETS = _secrets.split(",");
+  public static String[] SECRETS = _secrets.split(",");
   private static SecureRandom random = new SecureRandom();
   public static final String JWT_SECRET =
       TextCodec.BASE64.encode(SECRETS[random.nextInt(SECRETS.length)]);
