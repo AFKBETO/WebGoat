@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -86,7 +87,17 @@ public class FileServer {
     String username = authentication.getName();
     var destinationDir = new File(fileLocation, username);
     destinationDir.mkdirs();
-    myFile.transferTo(new File(destinationDir, myFile.getOriginalFilename()));
+    var fileNameAndPath =
+        Paths.get(destinationDir.getAbsolutePath(), myFile.getOriginalFilename())
+            .normalize()
+            .toString();
+    if (!fileNameAndPath.startsWith(destinationDir.getAbsolutePath())) {
+      log.error("Invalid file path: {}", fileNameAndPath);
+      return new ModelAndView(
+          new RedirectView("files", true),
+          new ModelMap().addAttribute("uploadSuccess", "File upload failed"));
+    }
+    myFile.transferTo(new File(fileNameAndPath));
     log.debug("File saved to {}", new File(destinationDir, myFile.getOriginalFilename()));
 
     return new ModelAndView(
