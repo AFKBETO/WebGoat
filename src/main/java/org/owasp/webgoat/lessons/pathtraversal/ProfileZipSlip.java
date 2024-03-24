@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -63,7 +64,13 @@ public class ProfileZipSlip extends ProfileUploadBase {
     var currentImage = getProfilePictureAsBase64();
 
     try {
-      var uploadedZipFile = tmpZipDirectory.resolve(file.getOriginalFilename());
+      var name = file.getOriginalFilename();
+      var tmpZipDirectoryPath = tmpZipDirectory.toString();
+      var fileNameAndPath = Paths.get(tmpZipDirectoryPath, name);
+      var uploadedZipFile = fileNameAndPath.normalize();
+      if (!uploadedZipFile.startsWith(tmpZipDirectoryPath)) {
+        return failed(this).output("path-traversal-zip-slip.invalid-path").build();
+      }
       FileCopyUtils.copy(file.getBytes(), uploadedZipFile.toFile());
 
       ZipFile zip = new ZipFile(uploadedZipFile.toFile());
