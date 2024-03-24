@@ -54,7 +54,10 @@ public class JWTSecretKeyEndpoint extends AssignmentEndpoint {
   private static SecureRandom random = new SecureRandom();
   public static final String JWT_SECRET =
       TextCodec.BASE64.encode(SECRETS[random.nextInt(SECRETS.length)]);
-  private static final String WEBGOAT_USER = "WebGoat";
+
+  @Value("${webgoat.user}")
+  private static String WEBGOAT_USER;
+
   private static final List<String> expectedClaims =
       List.of("iss", "iat", "exp", "aud", "sub", "username", "Email", "Role");
 
