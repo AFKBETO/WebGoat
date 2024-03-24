@@ -30,6 +30,7 @@ import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,8 +63,12 @@ public class JWTRefreshEndpoint extends AssignmentEndpoint {
   @Value("${jwt.password}")
   public static String PASSWORD;
 
-  @Value("${jwt.jwt_password}")
-  private static String JWT_PASSWORD;
+  private final byte[] JWT_PASSWORD = new byte[32];
+
+  public JWTRefreshEndpoint() {
+    SecureRandom random = new SecureRandom();
+    random.nextBytes(JWT_PASSWORD);
+  }
 
   private static final List<String> validRefreshTokens = new ArrayList<>();
 
