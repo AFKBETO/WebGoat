@@ -34,7 +34,6 @@ import io.jsonwebtoken.impl.TextCodec;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
@@ -70,7 +69,8 @@ import org.springframework.web.bind.annotation.RestController;
 })
 public class JWTVotesEndpoint extends AssignmentEndpoint {
 
-  public static final String JWT_PASSWORD = TextCodec.BASE64.encode(new SecureRandom().generateSeed(32));
+  public static final String JWT_PASSWORD =
+      TextCodec.BASE64.encode(new SecureRandom().generateSeed(32));
   private static String validUsers = "TomJerrySylvester";
 
   private static int totalVotes = 38929;
