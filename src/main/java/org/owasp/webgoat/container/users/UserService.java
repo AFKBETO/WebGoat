@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.flywaydb.core.Flyway;
 import org.owasp.webgoat.container.lessons.Initializeable;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -49,7 +50,14 @@ public class UserService implements UserDetailsService {
   }
 
   private void createLessonsForUser(WebGoatUser webGoatUser) {
-    jdbcTemplate.execute("CREATE SCHEMA \"" + webGoatUser.getUsername() + "\" authorization dba");
+    var sql = "CREATE SCHEMA ? authorization dba";
+    jdbcTemplate.execute(
+        sql,
+        (PreparedStatementCallback<Boolean>)
+            preparedStatement -> {
+              preparedStatement.setString(1, webGoatUser.getUsername());
+              return preparedStatement.execute();
+            });
     flywayLessons.apply(webGoatUser.getUsername()).migrate();
   }
 
