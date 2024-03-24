@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -88,11 +89,18 @@ public class ProfileUploadRetrieval extends AssignmentEndpoint {
     }
     try {
       var id = request.getParameter("id");
-      var catPicture =
-          new File(catPicturesDirectory, (id == null ? RandomUtils.nextInt(1, 11) : id) + ".jpg");
-      if (!catPicture.getAbsolutePath().startsWith(catPicturesDirectory.getAbsolutePath())) {
-        return ResponseEntity.badRequest().body("Illegal path traversal detected");
+      var fileNameAndPath =
+          Paths.get(
+                  catPicturesDirectory.getAbsolutePath(),
+                  (id == null ? RandomUtils.nextInt(1, 11) : id) + ".jpg")
+              .normalize()
+              .toString();
+      if (!fileNameAndPath.startsWith(catPicturesDirectory.getAbsolutePath())) {
+        return ResponseEntity.badRequest()
+            .body("Illegal characters are not allowed in the query params");
       }
+
+      var catPicture = new File(fileNameAndPath);
       if (catPicture.getName().toLowerCase().contains("path-traversal-secret.jpg")) {
         return ResponseEntity.ok()
             .contentType(MediaType.parseMediaType(MediaType.IMAGE_JPEG_VALUE))
