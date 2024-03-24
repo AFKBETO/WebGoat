@@ -90,7 +90,9 @@ public class ProfileUploadRetrieval extends AssignmentEndpoint {
       var id = request.getParameter("id");
       var catPicture =
           new File(catPicturesDirectory, (id == null ? RandomUtils.nextInt(1, 11) : id) + ".jpg");
-
+      if (!catPicture.getAbsolutePath().startsWith(catPicturesDirectory.getAbsolutePath())) {
+        return ResponseEntity.badRequest().body("Illegal path traversal detected");
+      }
       if (catPicture.getName().toLowerCase().contains("path-traversal-secret.jpg")) {
         return ResponseEntity.ok()
             .contentType(MediaType.parseMediaType(MediaType.IMAGE_JPEG_VALUE))
