@@ -65,13 +65,14 @@ public class ProfileZipSlip extends ProfileUploadBase {
 
     try {
       var name = file.getOriginalFilename();
+      var data = file.getBytes().clone();
       var tmpZipDirectoryPath = tmpZipDirectory.toString();
       var fileNameAndPath = Paths.get(tmpZipDirectoryPath, name);
       var uploadedZipFile = fileNameAndPath.normalize();
       if (!uploadedZipFile.startsWith(tmpZipDirectoryPath)) {
         return failed(this).output("path-traversal-zip-slip.invalid-path").build();
       }
-      FileCopyUtils.copy(file.getBytes(), uploadedZipFile.toFile());
+      FileCopyUtils.copy(data, uploadedZipFile.toFile());
 
       ZipFile zip = new ZipFile(uploadedZipFile.toFile());
       Enumeration<? extends ZipEntry> entries = zip.entries();
