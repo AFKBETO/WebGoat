@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -39,7 +40,13 @@ public class ProfileUploadBase extends AssignmentEndpoint {
     File uploadDirectory = cleanupAndCreateDirectoryForUser();
 
     try {
-      var uploadedFile = new File(uploadDirectory, fullName);
+      var fileNameAndPath =
+          Paths.get(uploadDirectory.getAbsolutePath(), fullName).normalize().toString();
+      if (!fileNameAndPath.startsWith(uploadDirectory.getAbsolutePath())) {
+        return failed(this).feedback("path-traversal-profile-invalid-name").build();
+      }
+
+      var uploadedFile = new File(fileNameAndPath);
       uploadedFile.createNewFile();
       FileCopyUtils.copy(file.getBytes(), uploadedFile);
 
